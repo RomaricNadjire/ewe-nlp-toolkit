@@ -1,0 +1,14 @@
+{
+  "id": "yendoukoanadjire/nllb-ewe-fine-tuning",
+  "title": "NLLB Ewe Fine-Tuning",
+  "code_file": "traduction.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": []
+}

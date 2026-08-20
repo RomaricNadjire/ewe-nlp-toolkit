@@ -1,0 +1,16 @@
+# Thème clair, sobre et accessible (contrastes WCAG AA).
+[theme]
+primaryColor = "#0D9488"            # teal-600 — accent (boutons, focus)
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F1F5F9" # slate-100 — champs, barre latérale
+textColor = "#0F172A"                # slate-900 — texte (contraste ~16:1 sur blanc)
+font = "sans serif"
+
+[server]
+# Démo locale : pas de rechargement auto (évite le déluge de warnings torchvision
+# du watcher Streamlit qui inspecte tous les modules transformers), upload raisonnable.
+fileWatcherType = "none"
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false

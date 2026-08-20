@@ -1,0 +1,15 @@
+# Démo Streamlit locale — Traducteur vocal éwé (ASR + Traduction + TTS)
+#
+# Installation (2 étapes — torch CPU d'abord, bien plus léger que la build CUDA) :
+#   ./.venv/bin/pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+#   ./.venv/bin/pip install -r app/requirements.txt
+streamlit>=1.35          # st.audio_input (enregistrement micro natif) requiert >= 1.35
+torch                    # installer la build CPU (cf. commande ci-dessus) pour rester léger
+soxr                     # rééchantillonnage 48k -> 16k (haute qualité, sans ffmpeg)
+transformers>=4.40
+peft                     # adaptateur LoRA de traduction
+sentencepiece            # tokenizer NLLB
+accelerate               # low_cpu_mem_usage
+soundfile                # lecture WAV
+numpy
+python-dotenv            # lecture de .env (HF_TOKEN_READ)

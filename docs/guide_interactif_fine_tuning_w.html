@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Masterclass : Fine-Tuning Modèles de Traduction (Éwé/Fr/En)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 380px; }
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .module-content { display: none; transform: translateY(10px); opacity: 0; transition: all 0.3s ease; }
+        .module-content.active { display: block; transform: translateY(0); opacity: 1; }
+        .nav-item.active { background-color: #e0f2fe; color: #0369a1; border-right: 4px solid #0284c7; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800 antialiased min-h-screen flex overflow-hidden">
+
+    <!-- Chosen Palette: Warm Neutrals (Stone/Slate bg) with Sky Blue (#0ea5e9) and Emerald (#10b981) accents to convey an academic, structured, yet approachable technological environment. -->
+    <!-- Application Structure Plan: A dashboard/LMS (Learning Management System) layout. A persistent left sidebar allows non-linear navigation through the distinct phases of ML training (Concepts, Data, Models, Process, Evaluation, Optimization). The main content area dynamically updates, preventing cognitive overload and allowing users to focus on one complex step at a time. Interactive elements (charts, troubleshooting grids) are embedded within relevant sections to foster active learning. -->
+    <!-- Visualization & Content Choices: 1. Model Selection -> Goal: Compare foundation models -> Viz: Interactive Bar Chart (Chart.js) -> Interaction: Hover for details -> Justification: Visualizes parameter size vs. multi-modal capability. 2. Training Simulation -> Goal: Understand Hyperparameters -> Viz: Line Chart (Chart.js) with Sliders -> Interaction: Adjust Learning Rate/Batch Size to see simulated Overfitting/Convergence -> Justification: Best way to teach complex ML dynamics without real GPUs. 3. Error Troubleshooting -> Goal: Problem solving -> Viz: Interactive Grid (HTML/Tailwind) -> Interaction: Click issue to reveal solution -> Justification: Quick reference for common pitfalls. Library: Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <aside class="w-72 bg-white shadow-xl h-screen flex flex-col z-20">
+        <div class="p-6 bg-slate-900 text-white">
+            <h1 class="text-2xl font-black tracking-tight leading-tight mb-2">🚀 AI Translator</h1>
+            <p class="text-sm text-slate-300">Masterclass Fine-Tuning <br><span class="text-sky-400 font-bold">Éwé ⇄ En ⇄ Fr</span></p>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4" id="navigation">
+            <button class="nav-item active w-full text-left px-6 py-4 text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-3" data-target="intro">
+                <span class="text-xl">📚</span> 1. Fondamentaux
+            </button>
+            <button class="nav-item w-full text-left px-6 py-4 text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-3" data-target="data">
+                <span class="text-xl">🗄️</span> 2. Préparation des Données
+            </button>
+            <button class="nav-item w-full text-left px-6 py-4 text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-3" data-target="models">
+                <span class="text-xl">🧠</span> 3. Choix du Modèle de Base
+            </button>
+            <button class="nav-item w-full text-left px-6 py-4 text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-3" data-target="training">
+                <span class="text-xl">⚙️</span> 4. Processus d'Entraînement
+            </button>
+            <button class="nav-item w-full text-left px-6 py-4 text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-3" data-target="eval">
+                <span class="text-xl">📊</span> 5. Évaluation & Métriques
+            </button>
+            <button class="nav-item w-full text-left px-6 py-4 text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-3" data-target="troubleshooting">
+                <span class="text-xl">⚠️</span> 6. Erreurs & Optimisation
+            </button>
+        </nav>
+        <div class="p-4 border-t bg-slate-50 text-xs text-slate-500 text-center">
+            Guide interactif 100% autonome.
+        </div>
+    </aside>
+
+    <main class="flex-1 h-screen overflow-y-auto bg-stone-50 relative">
+        <div class="max-w-5xl mx-auto p-8 lg:p-12 pb-24">
+
+            <section id="intro" class="module-content active">
+                <div class="mb-8">
+                    <span class="bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Module 1</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900 mt-4 mb-4">Comprendre le Fine-Tuning pour les Langues Peu Dotées</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed">
+                        Bienvenue dans ce guide complet. Vous êtes sur le point d'apprendre comment adapter des intelligences artificielles massives pour comprendre et traduire l'<strong>Éwé</strong> (Gbe), une langue parlée au Togo et au Ghana, vers l'Anglais et le Français. L'Éwé est considérée comme une langue "Low-Resource" (peu de données sur internet). Le <em>Fine-Tuning</em> est la solution.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-3xl mb-3">🎯</div>
+                        <h3 class="text-xl font-bold mb-2">Qu'est-ce que le Fine-Tuning ?</h3>
+                        <p class="text-slate-600">Au lieu d'entraîner une IA de zéro (ce qui coûte des millions), nous prenons un modèle pré-entraîné sur des centaines de langues (qui a déjà la logique linguistique) et nous l'affinons spécifiquement avec vos données Éwé-Fr/En.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="text-3xl mb-3">🎙️</div>
+                        <h3 class="text-xl font-bold mb-2">Texte vs Voix (Speech)</h3>
+                        <p class="text-slate-600">Vous visez un modèle multimodal. Cela implique la <strong>NMT</strong> (Neural Machine Translation) pour le texte et l'<strong>ASR/TTS</strong> (Automatic Speech Recognition / Text-To-Speech) pour l'audio. Les modèles modernes permettent d'aligner les deux espaces.</p>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-r-lg">
+                    <h4 class="font-bold text-indigo-900 text-lg mb-2">💡 La Règle d'Or (Le concept de "Transfer Learning")</h4>
+                    <p class="text-indigo-800">Le modèle a déjà appris la grammaire du Français et de l'Anglais, et possède des notions phonétiques mondiales. Votre tâche n'est pas de lui apprendre à parler, mais de lui apprendre <em>comment l'Éwé correspond</em> à ce qu'il connaît déjà.</p>
+                </div>
+            </section>
+
+            <section id="data" class="module-content">
+                <div class="mb-8">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Module 2</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900 mt-4 mb-4">Le Nerf de la Guerre : Les Données</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed">
+                        Un modèle n'est aussi bon que les données qu'il consomme. Pour l'Éwé, vous devez constituer des corpus parallèles. La qualité prime toujours sur la quantité lors du fine-tuning.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-800 text-white p-4 font-bold">Corpus Texte (Parallel Data)</div>
+                        <div class="p-6">
+                            <ul class="space-y-4 text-slate-600">
+                                <li><strong>Format requis :</strong> Fichiers <code>.jsonl</code> ou CSV avec paires <code>{"ewe": "...", "fr": "..."}</code></li>
+                                <li><strong>Sources existantes :</strong> 
+                                    <span class="block text-sm bg-slate-100 p-2 rounded mt-1">JW300 (Données religieuses, très propre en Éwé), OPUS, Wikipedia (minime).</span>
+                                </li>
+                                <li><strong>Technique :</strong> Back-translation. Utilisez un modèle faible pour traduire du FR vers l'Éwé, corrigez manuellement pour créer plus de données.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-800 text-white p-4 font-bold">Corpus Audio (Speech-to-Text)</div>
+                        <div class="p-6">
+                            <ul class="space-y-4 text-slate-600">
+                                <li><strong>Format requis :</strong> Audio <code>.wav</code> (16kHz) + Transcription exacte en texte.</li>
+                                <li><strong>Sources existantes :</strong> 
+                                    <span class="block text-sm bg-slate-100 p-2 rounded mt-1">Mozilla Common Voice (vérifier les contributions Ewe), enregistrements radios locales (Lomé/Kpalimé).</span>
+                                </li>
+                                <li><strong>Nettoyage :</strong> Supprimer les bruits de fond. Les audios de 5 à 15 secondes sont optimaux.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
+                    <h4 class="font-bold text-yellow-800 mb-2">⚠️ Pratique Indispensable : La Tokenization</h4>
+                    <p class="text-yellow-900 text-sm">
+                        L'Éwé contient des caractères spéciaux (ƒ, ɖ, ɛ, ɣ, ŋ, ɔ, ʋ). Vous DEVEZ vous assurer que le <em>Tokenizer</em> du modèle de base que vous choisissez gère l'encodage UTF-8 de ces caractères. Si le tokenizer les remplace par [UNK] (Unknown), l'entraînement échouera.
+                    </p>
+                </div>
+            </section>
+
+            <section id="models" class="module-content">
+                <div class="mb-8">
+                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Module 3</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900 mt-4 mb-4">Que choisir ? L'État de l'Art</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed">
+                        Pour une innovation combinant Texte et Voix avec l'Éwé, vous ne partez pas de zéro. Voici les modèles fondamentaux existants (State-of-the-Art) que vous devez utiliser comme base pour votre fine-tuning.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-center">Comparaison des Modèles de Base</h3>
+                    <div class="chart-container">
+                        <canvas id="modelChart"></canvas>
+                    </div>
+                    <p class="text-sm text-slate-500 text-center mt-4">Graphique: Capacités des modèles (Score arbitraire basé sur la pertinence pour l'Éwé). Notez que SeamlessM4T est le plus polyvalent.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="border border-slate-200 p-5 rounded-lg bg-white">
+                        <div class="text-2xl mb-2">📝</div>
+                        <h4 class="font-bold text-lg mb-1">NLLB-200 (Meta)</h4>
+                        <p class="text-sm text-slate-600 mb-2"><em>No Language Left Behind</em>.</p>
+                        <ul class="text-xs space-y-1 text-slate-500">
+                            <li>- Spécialité: Texte uniquement.</li>
+                            <li>- Atout: Comprend déjà l'Éwé (ewe_Latn) nativement !</li>
+                            <li>- Stratégie: Fine-tuner pour améliorer la syntaxe.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-purple-200 p-5 rounded-lg bg-purple-50 ring-2 ring-purple-500">
+                        <div class="text-2xl mb-2">👑</div>
+                        <h4 class="font-bold text-lg mb-1">SeamlessM4T (Meta)</h4>
+                        <p class="text-sm text-slate-600 mb-2">Le joyau multimodal actuel.</p>
+                        <ul class="text-xs space-y-1 text-slate-500">
+                            <li>- Spécialité: Texte ↔ Voix direct.</li>
+                            <li>- Atout: Traduction en temps réel (Speech-to-Speech).</li>
+                            <li>- Recommandation: LE meilleur choix pour votre projet global.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-slate-200 p-5 rounded-lg bg-white">
+                        <div class="text-2xl mb-2">🗣️</div>
+                        <h4 class="font-bold text-lg mb-1">Whisper (OpenAI) / MMS</h4>
+                        <p class="text-sm text-slate-600 mb-2">Massively Multilingual Speech.</p>
+                        <ul class="text-xs space-y-1 text-slate-500">
+                            <li>- Spécialité: Transcription Audio (ASR).</li>
+                            <li>- Atout: MMS de Meta supporte +1000 langues dont l'Éwé.</li>
+                            <li>- Stratégie: Fine-tuner MMS pour les accents locaux togolais.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="training" class="module-content">
+                <div class="mb-8">
+                    <span class="bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Module 4</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900 mt-4 mb-4">Le Processus de A à Z (Le Code & La Théorie)</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed">
+                        L'entraînement moderne ne met pas à jour tout le modèle (Full Fine-Tuning). On utilise <strong>PEFT (Parameter-Efficient Fine-Tuning)</strong> via des techniques comme <strong>LoRA (Low-Rank Adaptation)</strong> pour économiser 90% de mémoire GPU.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-xl overflow-hidden mb-8 shadow-lg">
+                    <div class="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
+                        <span class="text-slate-300 font-mono text-sm">Pipeline standard (Hugging Face / PyTorch)</span>
+                    </div>
+                    <div class="p-6 text-emerald-400 font-mono text-sm leading-relaxed overflow-x-auto whitespace-pre">
+1. Charger le modèle (ex: SeamlessM4T) en 4-bit (Quantization)
+2. Configurer LoRA (r=16, lora_alpha=32)
+   -> Ne crée que ~1% de nouveaux poids à entraîner.
+3. Préparer le Dataset avec un DataCollator (Padding des séquences)
+4. Configurer le Trainer (Learning Rate, Batch Size, Epochs)
+5. Lancer l'entraînement (trainer.train())
+6. Sauvegarder les poids LoRA générés.
+7. Lors de l'inférence : Modèle de Base + Poids LoRA fusionnés.
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4">Simulateur d'Hyperparamètres</h3>
+                    <p class="text-sm text-slate-600 mb-6">Ajustez les curseurs pour comprendre l'impact sur la courbe de perte (Loss) lors de l'entraînement.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="w-full md:w-1/3 space-y-6">
+                            <div>
+                                <label class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                                    Learning Rate (Taux d'apprentissage)
+                                    <span id="lrValue" class="text-sky-600 font-mono">0.0002</span>
+                                </label>
+                                <input type="range" id="lrSlider" min="1" max="100" value="50" class="w-full accent-sky-600">
+                                <p class="text-xs text-slate-500 mt-1" id="lrDesc">Optimal pour LoRA (2e-4). Trop haut = Instabilité. Trop bas = Lenteur.</p>
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                                    Epochs (Passages sur les données)
+                                    <span id="epochValue" class="text-sky-600 font-mono">15</span>
+                                </label>
+                                <input type="range" id="epochSlider" min="5" max="50" value="15" class="w-full accent-sky-600">
+                                <p class="text-xs text-slate-500 mt-1">Attention au surapprentissage (Overfitting) si trop élevé.</p>
+                            </div>
+                            <button id="simBtn" class="w-full bg-slate-900 text-white font-bold py-3 rounded-lg hover:bg-slate-800 transition-colors">
+                                Lancer la simulation ⚙️
+                            </button>
+                        </div>
+                        <div class="w-full md:w-2/3">
+                            <div class="chart-container">
+                                <canvas id="trainingChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="eval" class="module-content">
+                <div class="mb-8">
+                    <span class="bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Module 5</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900 mt-4 mb-4">Évaluer la Qualité (Ce qui existe)</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed">
+                        Comment savoir si votre modèle traduit bien "Nye ŋkɔ enye..." ? La fonction de perte (Loss) ne suffit pas. Vous devez utiliser des métriques NLP standards sur un jeu de données de test jamais vu par le modèle.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-bl-lg">POUR LE TEXTE</div>
+                        <h3 class="text-xl font-bold mb-3 mt-2 text-blue-900">BLEU & chrF++</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <strong class="text-slate-800 block">BLEU Score:</strong>
+                                <p class="text-sm text-slate-600">Compare les mots de la traduction générée avec une référence humaine. (Score de 0 à 100). Pour l'Éwé, un score au-dessus de 25-30 est déjà un grand succès.</p>
+                            </div>
+                            <div>
+                                <strong class="text-slate-800 block">chrF++ (Recommandé) :</strong>
+                                <p class="text-sm text-slate-600">Métrique basée sur les caractères. Beaucoup plus efficace que BLEU pour les langues morphologiquement riches et peu dotées comme l'Éwé.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-orange-100 text-orange-800 text-xs font-bold px-3 py-1 rounded-bl-lg">POUR LA VOIX</div>
+                        <h3 class="text-xl font-bold mb-3 mt-2 text-orange-900">WER (Word Error Rate)</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <strong class="text-slate-800 block">Le Taux d'Erreur :</strong>
+                                <p class="text-sm text-slate-600">Le pourcentage de mots mal reconnus dans l'audio par rapport à la transcription réelle. (Plus c'est bas, mieux c'est. Objectif < 20%).</p>
+                            </div>
+                            <div>
+                                <strong class="text-slate-800 block">ASR-BLEU :</strong>
+                                <p class="text-sm text-slate-600">Pour le système complet (Audio Éwé -> Texte Français). Combine l'erreur de reconnaissance vocale et l'erreur de traduction.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="troubleshooting" class="module-content">
+                <div class="mb-8">
+                    <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Module 6</span>
+                    <h2 class="text-4xl font-extrabold text-slate-900 mt-4 mb-4">Erreurs Fréquentes & Comment Innover</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed">
+                        Le fine-tuning est un art expérimental. Voici les pièges classiques et comment vous démarquer (Innover). Cliquez sur les problèmes pour voir la solution.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 mb-8" id="errorAccordion">
+                </div>
+
+                <div class="bg-gradient-to-r from-slate-900 to-indigo-900 text-white p-8 rounded-xl shadow-xl">
+                    <h3 class="text-2xl font-bold mb-4 flex items-center gap-3"><span class="text-3xl">🚀</span> Comment Innover ?</h3>
+                    <ul class="space-y-3 text-slate-300">
+                        <li class="flex items-start gap-3">
+                            <span class="text-indigo-400 font-bold">1.</span>
+                            <p><strong>Code-Switching :</strong> Les Togolais mélangent souvent Éwé, Français et Anglais dans la même phrase. Innovez en créant un mini-dataset "Mixte" pour que le modèle reconnaisse ces transitions fluides.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-indigo-400 font-bold">2.</span>
+                            <p><strong>Tons Éwé (TTS) :</strong> L'Éwé est une langue tonale. Dans la génération de voix (TTS), utilisez des données annotées avec les marqueurs de tons pour créer la première IA vocale Éwé qui ne sonne pas "robotique".</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-indigo-400 font-bold">3.</span>
+                            <p><strong>RAG (Retrieval-Augmented Generation) :</strong> Au lieu de tout apprendre au modèle, connectez-le à un dictionnaire Éwé-Fr en temps réel (via RAG) pour les mots rares de médecine ou de technologie.</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const errors = [
+            {
+                title: "Catastrophic Forgetting (Oubli Catastrophique)",
+                desc: "Le modèle devient très bon en Éwé, mais 'oublie' comment parler correctement l'Anglais ou le Français, produisant des phrases syntaxiquement incorrectes.",
+                solution: "Utiliser QLoRA/LoRA au lieu du Full Fine-Tuning. Ajouter un faible pourcentage (10%) de données originales English-French de haute qualité dans votre dataset d'entraînement pour maintenir ses acquis."
+            },
+            {
+                title: "Overfitting (Surapprentissage)",
+                desc: "La courbe de perte sur l'entraînement descend à 0, mais la perte de validation remonte. Le modèle traduit parfaitement vos données d'entraînement mais échoue sur de nouvelles phrases.",
+                solution: "Augmenter le 'Weight Decay', utiliser l'Early Stopping (arrêter l'entraînement quand la validation remonte), ou augmenter le Dropout dans la configuration LoRA."
+            },
+            {
+                title: "Out Of Memory (OOM) GPU",
+                desc: "Erreur CUDA out of memory lors du lancement de l'entraînement, même avec de petits batch sizes.",
+                solution: "Passer en Quantization 4-bit (bitsandbytes). Activer le 'Gradient Checkpointing'. Réduire le batch size à 1 et utiliser le 'Gradient Accumulation Steps' (ex: 8) pour simuler un batch de 8."
+            },
+            {
+                title: "Hallucinations sur l'Audio (ASR)",
+                desc: "Le modèle transcrit de l'audio Éwé, mais génère des mots qui n'existent pas ou répète la même phrase en boucle.",
+                solution: "Les données audio sont mal alignées (l'audio ne correspond pas exactement au texte) ou trop bruyantes. Nettoyer le dataset. Couper les silences longs au début et à la fin des fichiers WAV."
+            }
+        ];
+
+        function initAccordion() {
+            const container = document.getElementById('errorAccordion');
+            errors.forEach((err, idx) => {
+                const item = document.createElement('div');
+                item.className = 'border-b border-slate-200 last:border-0';
+                item.innerHTML = `
+                    <button class="w-full text-left p-5 font-bold text-slate-800 hover:bg-slate-50 flex justify-between items-center transition-colors focus:outline-none" onclick="toggleAccordion(${idx})">
+                        <span class="flex items-center gap-2"><span class="text-red-500 text-lg">✗</span> ${err.title}</span>
+                        <span class="text-xl text-slate-400 transition-transform duration-200" id="icon-${idx}">+</span>
+                    </button>
+                    <div class="hidden px-5 pb-5 pt-0 bg-slate-50 text-slate-600 text-sm leading-relaxed border-l-4 border-emerald-500" id="content-${idx}">
+                        <strong class="text-slate-800 block mb-1">Diagnostic :</strong> ${err.desc}<br><br>
+                        <strong class="text-emerald-700 block mb-1">Solution :</strong> ${err.solution}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleAccordion(idx) {
+            const content = document.getElementById(`content-${idx}`);
+            const icon = document.getElementById(`icon-${idx}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.innerText = '-';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.innerText = '+';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        const navItems = document.querySelectorAll('.nav-item');
+        const modules = document.querySelectorAll('.module-content');
+
+        navItems.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navItems.forEach(n => n.classList.remove('active'));
+                modules.forEach(m => m.classList.remove('active'));
+                btn.classList.add('active');
+                const targetId = btn.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+                
+                if(targetId === 'models' && !window.modelChartLoaded) {
+                    initModelChart();
+                    window.modelChartLoaded = true;
+                }
+                if(targetId === 'training' && !window.trainingChartLoaded) {
+                    initTrainingChart();
+                    window.trainingChartLoaded = true;
+                }
+            });
+        });
+
+        function initModelChart() {
+            const ctx = document.getElementById('modelChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['NLLB-200 (Texte)', 'SeamlessM4T (Voix/Texte)', 'Whisper (Voix)', 'MMS (Voix)'],
+                    datasets: [{
+                        label: 'Prise en charge native Éwé',
+                        data: [90, 85, 10, 95],
+                        backgroundColor: '#0ea5e9',
+                        borderRadius: 4
+                    }, {
+                        label: 'Flexibilité (Fine-Tuning)',
+                        data: [80, 70, 90, 75],
+                        backgroundColor: '#10b981',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score d\'Adéquation (%)' } }
+                    }
+                }
+            });
+        }
+
+        let myTrainingChart = null;
+
+        function initTrainingChart() {
+            const ctx = document.getElementById('trainingChart').getContext('2d');
+            myTrainingChart = new Chart(ctx, {
+                type: 'line',
+                data: getSimulatedData(50, 15),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        title: { display: true, text: 'Simulation d\'Entraînement : Training Loss vs Validation Loss' },
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Loss (Perte)' } },
+                        x: { title: { display: true, text: 'Epochs' } }
+                    }
+                }
+            });
+        }
+
+        function getSimulatedData(lrIndex, epochs) {
+            let trainLoss = [];
+            let valLoss = [];
+            let labels = [];
+            let baseTrainLoss = 4.0;
+            let baseValLoss = 4.1;
+            
+            let isOverfitting = false;
+            let isTooSlow = false;
+            
+            if (lrIndex > 80) isOverfitting = true;
+            if (lrIndex < 20) isTooSlow = true;
+
+            for (let i = 1; i <= epochs; i++) {
+                labels.push('Ep ' + i);
+                
+                if (isTooSlow) {
+                    baseTrainLoss -= 0.05 + (Math.random() * 0.02);
+                    baseValLoss -= 0.04 + (Math.random() * 0.02);
+                } else {
+                    baseTrainLoss -= (0.4 / (i * 0.5)) + (Math.random() * 0.05);
+                    if (isOverfitting && i > (epochs / 2)) {
+                        baseValLoss += (0.2 * (i / epochs)) + (Math.random() * 0.1); 
+                    } else {
+                        baseValLoss -= (0.35 / (i * 0.5)) + (Math.random() * 0.05);
+                    }
+                }
+                
+                trainLoss.push(Math.max(0.1, baseTrainLoss));
+                valLoss.push(Math.max(0.15, baseValLoss));
+            }
+
+            return {
+                labels: labels,
+                datasets: [
+                    { label: 'Train Loss (Données apprises)', data: trainLoss, borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.4 },
+                    { label: 'Validation Loss (Données nouvelles)', data: valLoss, borderColor: '#f59e0b', backgroundColor: '#f59e0b', tension: 0.4 }
+                ]
+            };
+        }
+
+        document.getElementById('lrSlider').addEventListener('input', (e) => {
+            const val = e.target.value;
+            let displayVal = "0.0002 (Optimal)";
+            let desc = "Optimal pour LoRA (2e-4). L'apprentissage est stable.";
+            if(val > 80) { displayVal = "0.01 (Trop Haut)"; desc = "Risque sévère de divergence et d'Overfitting rapide."; document.getElementById('lrValue').className = 'text-red-600 font-mono'; }
+            else if(val < 20) { displayVal = "0.00001 (Trop Bas)"; desc = "Le modèle apprendra très lentement. Perte de temps de calcul."; document.getElementById('lrValue').className = 'text-yellow-600 font-mono'; }
+            else { document.getElementById('lrValue').className = 'text-sky-600 font-mono'; }
+            
+            document.getElementById('lrValue').innerText = displayVal;
+            document.getElementById('lrDesc').innerText = desc;
+        });
+
+        document.getElementById('epochSlider').addEventListener('input', (e) => {
+            document.getElementById('epochValue').innerText = e.target.value;
+        });
+
+        document.getElementById('simBtn').addEventListener('click', () => {
+            if(!myTrainingChart) return;
+            const lr = parseInt(document.getElementById('lrSlider').value);
+            const epochs = parseInt(document.getElementById('epochSlider').value);
+            myTrainingChart.data = getSimulatedData(lr, epochs);
+            myTrainingChart.update();
+        });
+
+        initAccordion();
+    </script>
+</body>
+</html>

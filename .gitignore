@@ -1,0 +1,37 @@
+# ─── Données volumineuses (non versionnées) ───
+data/raw/asr/
+data/interim/
+data/processed/
+models/
+waxal/
+
+# Gros corpus minés téléchargés (volumineux) — gardés hors git
+data/raw/translation/ghananlp_*/
+data/raw/translation/michsethowusu_*/
+data/raw/translation/adaboubvincent_*/
+data/raw/translation/opus_nllb_*/
+
+# ─── Secrets / tokens — NE JAMAIS versionner ───
+.env
+.env.*
+!.env.example
+/txt
+kaggle.json
+**/kaggle.json
+
+# ─── Jupyter / Python ───
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# ─── Archives & backups ───
+*.zip
+backup/
+
+**.log
+**.bak
+**.out
+logs/
+perfs/
